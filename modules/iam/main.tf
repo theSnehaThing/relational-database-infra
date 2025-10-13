@@ -28,5 +28,5 @@ resource "aws_iam_user_policy" "read_own_secret" {
 }
 
 output "user_name" {
-    value = aws_iam_user.name.name
+    value = aws_iam_user.user.name
 }

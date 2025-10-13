@@ -32,7 +32,7 @@ resource "aws_db_instance" "this" {
     allocated_storage = var.db_allocated_storage
     db_name = var.db_name
     username = var.master_username
-    password = random_password.this.result
+    password = random_password.rds_master_password.result
     publicly_accessible = var.publicly_accessible
     skip_final_snapshot = true
     tags = merge(var.tag, {

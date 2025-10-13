@@ -27,3 +27,24 @@ Thumbs.db
 
 # Temporary files
 *.tmp
+.venv/
+env/
+venv/
+ENV/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.class
+*.jar
+*.war
+*.ear
+# LocalStack
+.localstack/
+.localstack/tmp/
+.localstack/data/
+.localstack/infra/
+.localstack/logs/
+.localstack/config/
+.localstack/volume/
+.localstack/.cache/     

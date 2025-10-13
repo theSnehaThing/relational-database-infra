@@ -7,7 +7,7 @@ resource "random_password" "user_password" {
 resource "aws_secretsmanager_secret" "secrets" {
 
   name        = "${var.username}-${var.environment}-db-secret-${var.suffix}"
-  description = "Secret for database user ${each.username} in ${var.environment} environment"
+  description = "Secret for database user ${var.username} in ${var.environment} environment"
   tags = merge(
     var.tag,
     {

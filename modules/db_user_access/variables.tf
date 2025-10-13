@@ -1,8 +1,8 @@
 variable "environment" {
-  type=string
+  type = string
 }
 variable "aws_region" {
-  type=string
+  type = string
 }
 variable "db_endpoint" {
   type = string
@@ -14,11 +14,11 @@ variable "rds_master_secret_arn" {
   type = string
 }
 variable "users" {
-    type =map(any)
+  type = map(any)
 }
 variable "create_users" {
-    type = bool
-    default = false
+  type = bool
+  default = false
 }
 variable "tag" {
   type = map(string)

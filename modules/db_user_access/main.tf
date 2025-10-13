@@ -14,7 +14,7 @@ provider "mysql" {
 }
 
 #schema
-resource "db_schema" "schemas" {
+resource "mysql_dbschema" "schemas" {
   for_each = var.users
   name     = "${var.environment}-${each.value.username}-schema"
   depends_on = [module.user_secrets]
@@ -28,12 +28,12 @@ resource "db_schema" "schemas" {
   
 }
 
-resource "db_user" "users" {
+resource "mysql_user" "users" {
   for_each = var.users
   name     = "${var.environment}-${each.value.username}"
-  host     = var.host
-  plaintext_password = module.user_secrets[each.key].password
-  depends_on = [db_schema.schemas]
+  host     = var.db_endpoint
+  plaintext_password = each.value.password
+  depends_on = [mysql_dbschema.schemas]
   tags = merge(
     var.tag,
     {
@@ -43,16 +43,15 @@ resource "db_user" "users" {
   )
 }
 
-resource "db_user_grants" "grants" {
-    for_each = db_user.users
+resource "mysql_user_grants" "grants" {
+    for_each = mysql_user.users
     user     = each.value.user
     host     = each.value.host
-    database   = db_schema.schemas[each.key].name
+    database   = mysql_dbschema.schemas[each.key].name
     privileges = [
         "SELECT",
         "INSERT",
         "UPDATE",
         "DELETE"
     ]
-    depends_on = [db_user.users]
 }
