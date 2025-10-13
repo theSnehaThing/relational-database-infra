@@ -44,14 +44,3 @@ resource "aws_db_instance" "this" {
   
 }
 
-output "db_endpoint" {
-  value = aws_db_instance.this.address
-}
-
-output "name" {
-  value = aws_db_instance.this.port
-}
-
-output "rds_master_secret_arn" {
-    value = aws_secretsmanager_secret.rds_master_secret.arn
-}

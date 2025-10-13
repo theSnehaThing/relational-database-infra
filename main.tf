@@ -1,6 +1,5 @@
 locals {
   users = {for idx, user in var.user : tostring((idx)) => user}
-  db_name = "${var.environment}-${var.aws_region}-${var.state}-database"
 }
 
 module "rds" {
@@ -65,7 +64,7 @@ module "user_iam" {
 module "db_user_access" {
   source = "./modules/db_user_access"
   providers = {
-    mysql = mysql
+    mysql = hashicorp/mysql
   }
   aws_region = var.aws_region
   rds_master_secret_arn = module.rds.rds_master_secret_arn
