@@ -61,7 +61,10 @@ variable "user" {
       username   = string
     }))
     default = [ {
-      
+      first_name = ""
+      last_name  = ""
+      email      = ""
+      username   = ""
     } ]
 }
 
