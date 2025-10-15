@@ -107,6 +107,93 @@ Understood! I'll leave the test script as is. The current version works well and
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+I have a repo README.md at root that has details about the setup, dependences, steps to setup, deploy, some examples, testing and cleanup.
+This also has new developer guide  for user management.
+More details are in HowTo folder.
+It has the script to deploy. Steps to tell new user wherre to make the changes and how to run it. All executtions are logged as well.
+Then there is the localsetup folder, that has local test details, script, a readme for local set up and execution. Logs from test are captured run-local.log. 
+
+
+Below is a concise, junior-engineer–friendly write up that points to the repo resources and explains what each piece contains and where to look for details.
+
+Overview
+
+Purpose: Terraform-based automation to provision a shared MySQL database (RDS / local) with per-developer schemas, IAM users, and credentials stored in Secrets Manager. Designed for local development (LocalStack + Docker) and AWS deployment.
+Where to read full instructions
+
+Root README.md — top-level project overview, architecture, quick-start commands for local and AWS, examples, cleanup, and a high-level project map. Start here for an end-to-end walkthrough.
+HowTo/README.md — focused guide for the user-management script and CSV format (how to add users, required CSV fields, examples).
+localsetup/README.md — local test details and how to run local-only checks; outputs are written to localsetup/run-local.log.
+Key files and folders (what they contain and why you care)
+
+envs/
+envs/localstack.tfvars — configuration used for local runs (LocalStack). Edit this for local endpoints, DB credentials, or other env-specific values.
+envs/prod.tfvars (or copy) — template for production values. Do not commit secrets.
+main.tf, variables.tf — root Terraform module and variable definitions. Use these when adding or changing global infra behavior.
+modules/
+modules/rds/ — RDS / MySQL database configuration.
+modules/iam/ — IAM users and policies for per-developer access.
+modules/secrets/ — Secrets Manager resources used to store DB credentials.
+modules/db_user_access/ — creation of DB users, schemas, and permission grants.
+add-users.sh (root) and HowTo/add-users.sh — scripts to create users from a CSV into the target environment (the repo contains a user-management script; check both locations if unsure). Script validates CSV, updates tfvars (or user-specific var files), runs Terraform flows, shows created resources, and resets the CSV on success.
+users.csv — template input for add-users.sh. Required header: FirstName,LastName,Email,Role. Valid roles: developer, admin, manager.
+test-infrastructure.sh — smoke tests to verify the deployment (connectivity, resource presence).
+localsetup/
+README.md — step-by-step for running local tests.
+run-local.log — captured output from local test runs; useful when debugging failures.
+HowTo/README.md — shows expected CSV format, usage examples like ./add-users.sh users.csv local, and what the script outputs (IAM names, schema names, secret names).
+Quick commands (what junior engineers will actually run)
+
+Local environment start (LocalStack + MySQL container):
+localstack start -d
+docker run -d --name localstack-mysql -e MYSQL_ROOT_PASSWORD=rootpassword -p 3306:3306 mysql:8.0
+Configure AWS CLI for LocalStack (fake creds):
+aws configure set aws_access_key_id test
+aws configure set aws_secret_access_key test
+aws configure set region eu-west-1
+Deploy (local):
+terraform init
+terraform apply -var-file=envs/localstack.tfvars -auto-approve
+Add users (example):
+./add-users.sh users.csv local
+(or) ./HowTo/add-users.sh users.csv local — see HowTo/README.md for exact script path used in your copy
+Test:
+./test-infrastructure.sh
+Retrieve secrets:
+LocalStack: awslocal secretsmanager get-secret-value --secret-id <secret-name>
+AWS: aws secretsmanager get-secret-value --secret-id <secret-name>
+Cleanup:
+terraform destroy -var-file=envs/{env}.tfvars -auto-approve
+docker stop localstack-mysql && docker rm localstack-mysql
+localstack stop
+What gets created (naming patterns)
+
+IAM User: {env}-euwest1-{firstname}
+Database Schema: {env}-euwest1-{firstname}_schema
+Secret: {env}-euwest1-{firstname}-db-secret
+DB user with role-specific permissions
+Where to make changes (typical edits)
+
+envs/{env}.tfvars — change sizes, endpoints, DB passwords (keep secrets out of VCS).
+modules/* — change infra implementation or permissions.
+add-users.sh — modify the user ingestion behavior, CSV handling, or tfvars injection logic.
+test-infrastructure.sh / localsetup/* — alter or extend smoke tests for your needs.
+Logs and debugging
+
+Script runs produce stdout logs; some helper scripts write persistent logs. Check localsetup/run-local.log for local test output.
+For secrets or API errors check LocalStack logs, Docker container logs (docker logs localstack-mysql), and Terraform plan/apply output.
+Security and operational notes
+
+Never commit production credentials/secrets to the repo.
+Use least-privilege AWS credentials for deployment.
+In CI, inject provider credentials via environment variables or a secrets manager.
+Where to go next
+
+Read root README.md for the full quick-start flow.
+Follow HowTo/README.md to prepare users.csv and run the add-users script.
+Use localsetup/README.md and run-local.log to validate a local deployment before touching AWS.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Huelp me pdate my readme, make it structured readable easy to use give the steps clearly. do not remove my existing data
 
 I've restructured your README to be much more organized and user-friendly while keeping all your existing data. The main improvements:
@@ -123,3 +210,15 @@ All your resource links
 All your examples and usage patterns
 All your requirements and validation info
 The README now flows logically from overview → setup → user management → advanced topics, making it much easier for new developers to understand and use the project.
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
