@@ -55,5 +55,5 @@ user = [
     last_name  = "AnotherKees"
     email      = "kees2@2solar.nl"
     role       = "developer"
-  }
+  },
 ]

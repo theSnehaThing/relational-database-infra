@@ -7,9 +7,7 @@ crash.log
 crash.*.log
 
 # Logs (but keep important documentation logs)
-*.log
 !setup.log
-runlocal.log
 run.log
 
 # OS
@@ -66,6 +64,3 @@ runlocal.log
 run.log
 
 # Test infrastructure scripts
-test-infrastructure.sh
-run-local.sh
-ReadmeLocal.md
