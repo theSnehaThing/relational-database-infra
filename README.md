@@ -67,7 +67,7 @@ Simple script to add users to database infrastructure environments.
 ### Usage
 
 ```bash
-./add-users.sh <users.csv> <environment>
+./HowTo/adduser.sh <users.csv> <environment>
 ```
 
 ### Steps
