@@ -17,7 +17,7 @@ Piet,Pietersen,piet@2solar.nl,developer
 Klaas,Klassen,klass@2solar.nl,admin
 
 ```
-Dont forget the new line at the end of users.csv
+Don't forget the new line at the end of users.csv
 
 2. **Run the script** with environment:
 ```bash
