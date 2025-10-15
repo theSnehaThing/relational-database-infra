@@ -56,16 +56,4 @@ user = [
     email      = "kees2@2solar.nl"
     role       = "developer"
   },
-  {
-    first_name = "sneha"
-    last_name  = "manna"
-    email      = "sneha@example.com"
-    role       = "developer"
-  },
-  {
-    first_name = "sneha"
-    last_name  = "manna"
-    email      = "sneha@example.com"
-    role       = "developer"
-  },
 ]
