@@ -186,10 +186,11 @@ run_cmd "docker exec localstack-mysql mysql -u root -p'rootpassword' -e \"SELECT
 log "Step 10: Running infrastructure tests..."
 
 # Make test script executable
-chmod +x test-infrastructure.sh
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+chmod +x "$SCRIPT_DIR/test-infrastructure.sh"
 
 # Run the test script
-if ./test-infrastructure.sh; then
+if "$SCRIPT_DIR/test-infrastructure.sh"; then
     log "✅ All infrastructure tests passed!"
 else
     log "❌ Some infrastructure tests failed. Check the log for details."
