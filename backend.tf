@@ -1,9 +1,9 @@
 terraform {
   backend "s3" {
-    bucket = "terraform-state-sol"
-    key    = "relational-database-infra/terraform.tfstate"
-    region = "ap-northeast-2"
-    dynamodb_table = "terraform-state-locks"
-    encrypt = true
+    # Configuration provided via -backend-config flag
+    # Use backend-configs/localstack.hcl for LocalStack
+    # Use backend-configs/dev.hcl for Dev environment
+    # Use backend-configs/test.hcl for Test environment  
+    # Use backend-configs/prod.hcl for Prod environment
   }
 }

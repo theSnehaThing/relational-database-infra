@@ -1,10 +1,10 @@
 locals {
-  iam_name = "${var.username}-${var.environment}-iam-${var.suffix}"
+  iam_name = "${var.username}-${var.environment}-iam"
 }
 
 resource "aws_iam_user" "user" {
   name = local.iam_name
-  path = "/users/${var.username}-${var.environment}/"
+  path = "/users/${var.username}/"
   tags = {
         Environment = var.environment
         ManagedBy   = "Terraform"
@@ -27,6 +27,3 @@ resource "aws_iam_user_policy" "read_own_secret" {
   
 }
 
-output "user_name" {
-    value = aws_iam_user.user.name
-}

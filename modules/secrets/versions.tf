@@ -8,10 +8,6 @@ terraform {
       source  = "hashicorp/random"
       version = "~> 3.1"
     }
-    mysql = {
-      source  = "petoju/mysql"
-      version = "~> 3.0"
-    }
   }
   required_version = ">= 1.0"
 }

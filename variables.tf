@@ -1,76 +1,66 @@
 variable "aws_region" {
-  description = "The AWS region to create resources in."
+  description = "AWS region"
   type        = string
-  default     = "eu-west-1"
 }
 
 variable "environment" {
-  description = "The environment to create resources in."
+  description = "Environment name"
   type        = string
 }
 
 variable "db_instance_class" {
-  description = "The instance class for the database."
+  description = "RDS instance class"
   type        = string
+  default     = "db.t3.micro"
 }
 
 variable "db_engine" {
-  description = "The database engine to use."
+  description = "Database engine"
   type        = string
-  default = "mysql"
+  default     = "mysql"
 }
 
 variable "db_engine_version" {
-  description = "The version of the database engine."
+  description = "Database engine version"
   type        = string
   default     = "8.0"
 }
 
-variable "state" {
-  description = "State or project state (e.g. active, archive, etc.)"
-  type        = string
-  default     = "active"
-}
-
-locals {
-  db_name = "${var.environment}-${var.aws_region}-${var.state}-database"
-}
-
-output "db_name" {
-  value = local.db_name
-}
-
-variable "publicly_accessible" {
-    description = "Whether the database should be publicly accessible."
-    type        = bool
-    default     = false
-}
-
 variable "db_allocated_storage" {
-  description = "The allocated storage for the database in gigabytes."
+  description = "Allocated storage for RDS instance"
   type        = number
   default     = 20
 }
 
-variable "user" {
-    description = "The username for a database user."
-    type        = list(object({
-      first_name = string
-      last_name  = string
-      email      = string
-      username   = string
-    }))
-    default = [ {
-      first_name = ""
-      last_name  = ""
-      email      = ""
-      username   = ""
-    } ]
+variable "publicly_accessible" {
+  description = "Whether RDS instance should be publicly accessible"
+  type        = bool
+  default     = false
 }
 
-#toggle user creation in mysql
 variable "create_user" {
-  description = "Whether to create a database user."
+  description = "Whether to create database users"
   type        = bool
   default     = true
+}
+
+variable "user" {
+  description = "List of users to create"
+  type = list(object({
+    first_name = string
+    last_name  = string
+    email      = string
+    role       = optional(string, "developer")
+  }))
+}
+
+variable "db_state" {
+  description = "Database state (active, archive, primary, secondary)"
+  type        = string
+  default     = "active"
+  
+  validation {
+    condition     = contains(["active", "archive", "primary", "secondary"], var.db_state)
+    error_message = "Database state must be one of: active, archive, primary, secondary."
+  }
 }

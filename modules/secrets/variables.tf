@@ -32,6 +32,3 @@ variable "tag" {
   type = map(string)
 }
 
-variable "suffix" {
-  type = string
-}

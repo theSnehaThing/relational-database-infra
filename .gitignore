@@ -1,15 +1,16 @@
 # Terraform
 *.tfstate
 *.tfstate.*
-*.tfvars
 .terraform/
 .terraform.lock.hcl
 crash.log
 crash.*.log
 
-# Logs
-run.log
+# Logs (but keep important documentation logs)
 *.log
+!setup.log
+runlocal.log
+run.log
 
 # OS
 .DS_Store
@@ -24,11 +25,11 @@ Thumbs.db
 # Backup files
 *~
 *.bak
+*.backup
 
 # Temporary files
 *.tmp
 .venv/
-env/
 venv/
 ENV/
 __pycache__/
@@ -39,6 +40,7 @@ __pycache__/
 *.jar
 *.war
 *.ear
+
 # LocalStack
 .localstack/
 .localstack/tmp/
@@ -47,4 +49,23 @@ __pycache__/
 .localstack/logs/
 .localstack/config/
 .localstack/volume/
-.localstack/.cache/     
+.localstack/.cache/
+
+# Docker
+docker-compose.override.yml
+
+# Backup configurations
+backend-*.tf.backup
+providers-*.tf.backup
+
+# Local development (Docker compose for LocalStack)
+docker-compose.localstack.yml
+
+# Local development logs
+runlocal.log
+run.log
+
+# Test infrastructure scripts
+test-infrastructure.sh
+run-local.sh
+ReadmeLocal.md

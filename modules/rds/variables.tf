@@ -3,8 +3,14 @@ variable "environment" {
 }
 
 variable "master_username" {
+  description = "Master username for RDS instance"
   type = string
-  default = "admin"
+  default = "db_admin"
+}
+
+variable "db_name" {
+  description = "Database name"
+  type        = string
 }
 
 variable "db_instance_class" {
@@ -27,14 +33,12 @@ variable "publicly_accessible" {
   type = bool
 }
 
-variable "tag" {
-  type = map(string)
-}
-
-variable "db_name" {
-  type = string
-}
-
 variable "aws_region" {
   type = string
+}
+
+variable "tag" {
+  description = "Tags to apply to resources"
+  type        = map(string)
+  default     = {}
 }
