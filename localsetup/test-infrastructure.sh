@@ -139,17 +139,16 @@ ERROR_COUNT=${ERROR_COUNT//[^0-9]/}
 
 if [ "${ERROR_COUNT:-0}" -eq 0 ]; then
     log "🎉 ALL TESTS PASSED! Infrastructure is working correctly."
+    echo "   - MySQL users: ✅ Created (5/5)"
+    echo "   - Database permissions: ✅ Granted (5/5)"
+    echo "   - Terraform management: ✅ Active"
+    echo ""
+    echo "✨ Your MySQL container setup for full database testing is complete!"
+    echo "   Connection: localhost:3306"
+    echo "   Root password: Available via 'docker exec localstack-mysql printenv MYSQL_ROOT_PASSWORD'"
+    echo "   User databases: local-piet-db, local-klass-db, local-henk-db, local-jan-db, local-kees-db"
     exit 0
 else
     log "❌ Some tests failed. Check the log file for details."
     exit 1
 fi
-
-echo "   - MySQL users: ✅ Created (5/5)"
-echo "   - Database permissions: ✅ Granted (5/5)"
-echo "   - Terraform management: ✅ Active"
-echo ""
-echo "✨ Your MySQL container setup for full database testing is complete!"
-echo "   Connection: localhost:3306"
-echo "   Root password: Available via 'docker exec localstack-mysql printenv MYSQL_ROOT_PASSWORD'"
-echo "   User databases: local-piet-db, local-klass-db, local-henk-db, local-jan-db, local-kees-db"
