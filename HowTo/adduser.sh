@@ -18,14 +18,14 @@ Add users from CSV file to specific environment.
 
 Arguments:
   users.csv     CSV file with user data
-  environment   Environment name (local, dev, prod, etc.)
+  environment   Environment name (local, localstack, dev, prod, etc.)
 
 CSV Format:
 FirstName,LastName,Email,Role
-John,Doe,john@2solar.nl,developer
-Jane,Smith,jane@2solar.nl,admin
+Klaas,Klassen,klass@2solar.nl,admin
 
 Valid roles: developer, admin, manager
+Note: 'local' environment will use localstack.tfvars file
 EOF
 }
 
@@ -52,16 +52,45 @@ validate_csv() {
     return 0
 }
 
-validate_environment() {
+get_tfvars_file() {
     local env="$1"
-    local tfvars_file="envs/${env}.tfvars"
     
-    if [[ ! -f "$tfvars_file" ]]; then
-        echo "Error: Environment file '$tfvars_file' not found"
-        return 1
+    # Handle local -> localstack mapping
+    if [[ "$env" == "local" ]]; then
+        if [[ -f "envs/localstack.tfvars" ]]; then
+            echo "envs/localstack.tfvars"
+            return 0
+        elif [[ -f "envs/local.tfvars" ]]; then
+            echo "envs/local.tfvars"
+            return 0
+        fi
+    else
+        if [[ -f "envs/${env}.tfvars" ]]; then
+            echo "envs/${env}.tfvars"
+            return 0
+        fi
     fi
     
-    return 0
+    return 1
+}
+
+validate_environment() {
+    local env="$1"
+    
+    if tfvars_file=$(get_tfvars_file "$env"); then
+        echo "Using tfvars file: $tfvars_file"
+        return 0
+    else
+        echo "Error: No environment file found for '$env'"
+        echo "Looked for:"
+        if [[ "$env" == "local" ]]; then
+            echo "  - envs/localstack.tfvars"
+            echo "  - envs/local.tfvars"
+        else
+            echo "  - envs/${env}.tfvars"
+        fi
+        return 1
+    fi
 }
 
 validate_email() {
@@ -131,7 +160,7 @@ process_csv() {
   },"$'\n'
         
         user_count=$((user_count + 1))
-        echo "Validated: $first_name $last_name ($email) - $role"
+        echo "Validated: $first_name $last_name ($email) - $role" >&2
         
     done < "$csv_file"
     
@@ -146,10 +175,17 @@ add_users_to_tfvars() {
     # Backup original
     cp "$tfvars_file" "${tfvars_file}.backup.$(date +%s)"
     
+    # Create temporary file with new users
+    echo "$new_users" > /tmp/new_users.tmp
+    
     # Add users before closing ]
-    awk -v new_users="$new_users" '
+    awk '
     /^\]$/ && in_user_block {
-        print new_users $0
+        while ((getline line < "/tmp/new_users.tmp") > 0) {
+            print line
+        }
+        close("/tmp/new_users.tmp")
+        print $0
         in_user_block = 0
         next
     }
@@ -160,6 +196,7 @@ add_users_to_tfvars() {
     ' "$tfvars_file" > "${tfvars_file}.tmp"
     
     mv "${tfvars_file}.tmp" "$tfvars_file"
+    rm -f /tmp/new_users.tmp
 }
 
 reset_csv() {
@@ -177,7 +214,6 @@ fi
 
 CSV_FILE="$1"
 ENVIRONMENT="$2"
-TFVARS_FILE="envs/${ENVIRONMENT}.tfvars"
 
 log "Starting user addition for environment: $ENVIRONMENT"
 
@@ -189,6 +225,9 @@ fi
 if ! validate_environment "$ENVIRONMENT"; then
     exit 1
 fi
+
+# Get the actual tfvars file to use
+TFVARS_FILE=$(get_tfvars_file "$ENVIRONMENT")
 
 if ! command -v terraform &> /dev/null; then
     echo "Error: terraform not found"
