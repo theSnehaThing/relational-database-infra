@@ -99,6 +99,9 @@ test-infrastructure.sh+8-7
 test-infrastructure.sh+7-6
 test-infrastructure.sh+7-6
 
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+AI helped me fix application docstrings, make it more readable and structured. Do not change the logic, just improve the readability.
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 good enough, but looks too generated, nevermind. Do not edit further.
@@ -123,3 +126,81 @@ All your resource links
 All your examples and usage patterns
 All your requirements and validation info
 The README now flows logically from overview → setup → user management → advanced topics, making it much easier for new developers to understand and use the project.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Adjust the current code base to accommodate sso login
+
+I've successfully adjusted the codebase to accommodate AWS SSO login. Here are the key changes made:
+
+## 🔧 New SSO Module Structure
+
+**Created modules/sso/** with:
+- `main.tf`: SSO user creation, permission sets, and account assignments
+- `variables.tf`: SSO-specific input variables
+- `outputs.tf`: SSO user details and permission set information
+
+## 📝 Key Code Changes
+
+**1. Added SSO Toggle Variable**
+- Added `use_sso` boolean variable to switch between IAM and SSO
+- Updated `variables.tf` with SSO configuration option
+
+**2. Updated Main Configuration**
+- Modified `main.tf` to conditionally use either IAM or SSO modules
+- SSO module creates: SSO users, permission sets, and account assignments
+- IAM module still available for backward compatibility
+
+**3. Enhanced Outputs** 
+- Added SSO-specific outputs (user IDs, permission sets, start URL)
+- Conditional outputs based on `use_sso` setting
+- Maintains existing IAM outputs when SSO is disabled
+
+**4. SSO Environment Configuration**
+- Created `envs/sso-local.tfvars` for SSO testing
+- Set `use_sso = true` to enable SSO mode
+- Example users configured for SSO testing
+
+## 🚀 SSO User Management
+
+**Created `add-users-sso.sh` script** that:
+- Validates SSO prerequisites and AWS SSO availability
+- Processes CSV files for SSO user creation  
+- Runs Terraform workflow with SSO-enabled tfvars
+- Provides SSO-specific success output and next steps
+
+## 📖 Documentation
+
+**Created `SSO-SETUP.md`** covering:
+- SSO benefits and setup prerequisites
+- Step-by-step SSO configuration guide
+- User login process and credential access
+- SSO vs IAM comparison table
+- Troubleshooting and migration guidance
+
+## 🔄 Migration Strategy
+
+The codebase now supports:
+- **Backward Compatibility**: Existing IAM setup continues working
+- **Gradual Migration**: Can run both IAM and SSO simultaneously  
+- **Environment Flexibility**: Different environments can use different auth methods
+- **Easy Rollback**: Simple toggle between IAM and SSO
+
+## 🧪 Testing Approach
+
+**SSO Environment Testing**:
+```bash
+# Deploy with SSO enabled
+terraform apply -var-file=envs/sso-local.tfvars
+
+# Add SSO users  
+./HowTo/add-users-sso.sh sso-users.csv sso-local
+```
+
+**User Access Flow**:
+1. SSO users created in AWS Identity Store
+2. Permission sets grant database secret access
+3. Users login via SSO portal
+4. Temporary credentials used for database access
+
+This implementation provides a modern, secure, and scalable identity management solution while maintaining full backward compatibility with the existing IAM-based approach.

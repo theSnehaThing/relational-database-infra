@@ -1,0 +1,31 @@
+# SSO Environment Configuration
+aws_region = "eu-west-1"
+environment = "sso-local"
+db_state = "active"
+
+# Database Configuration
+db_instance_class = "db.t3.micro" 
+db_engine = "mysql"
+db_engine_version = "8.0"
+db_allocated_storage = 20
+publicly_accessible = false
+
+# Enable SSO instead of IAM users
+use_sso = true
+create_user = true
+
+# User Configuration for SSO
+user = [
+  {
+    first_name = "TestUser"
+    last_name  = "SSOTest"
+    email      = "testuser@example.com"
+    role       = "developer"
+  },
+  {
+    first_name = "Admin"
+    last_name  = "SSOAdmin"
+    email      = "admin@example.com"
+    role       = "admin"
+  }
+]

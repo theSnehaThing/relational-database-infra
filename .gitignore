@@ -64,3 +64,7 @@ runlocal.log
 run.log
 
 # Test infrastructure scripts
+user-management-sso.log
+SSO-SETUP.md
+add-users-sso.sh
+sso-users.csv

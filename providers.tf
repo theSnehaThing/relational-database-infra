@@ -1,9 +1,9 @@
 provider "aws" {
   region = var.aws_region
   
-  # LocalStack configuration - only when environment is "local"
+  # LocalStack configuration - when environment contains "local"
   dynamic "endpoints" {
-    for_each = var.environment == "local" ? [1] : []
+    for_each = contains(["local", "localstack", "sso-local", "sso-test"], var.environment) ? [1] : []
     content {
       apigateway     = "http://localhost:4566"
       cloudformation = "http://localhost:4566"
@@ -30,13 +30,13 @@ provider "aws" {
   }
 
   # Local credentials and settings
-  access_key                  = var.environment == "local" ? "test" : null
-  secret_key                  = var.environment == "local" ? "test" : null
-  s3_use_path_style          = var.environment == "local" ? true : null
-  skip_credentials_validation = var.environment == "local" ? true : false
-  skip_metadata_api_check     = var.environment == "local" ? true : false
-  skip_region_validation      = var.environment == "local" ? true : false
-  skip_requesting_account_id  = var.environment == "local" ? true : false
+  access_key                  = contains(["local", "sso-local", "sso-test"], var.environment) ? "test" : null
+  secret_key                  = contains(["local", "sso-local", "sso-test"], var.environment) ? "test" : null
+  s3_use_path_style          = contains(["local", "sso-local", "sso-test"], var.environment) ? true : null
+  skip_credentials_validation = contains(["local", "sso-local", "sso-test"], var.environment) ? true : false
+  skip_metadata_api_check     = contains(["local", "sso-local", "sso-test"], var.environment) ? true : false
+  skip_region_validation      = contains(["local", "sso-local", "sso-test"], var.environment) ? true : false
+  skip_requesting_account_id  = contains(["local", "sso-local", "sso-test"], var.environment) ? true : false
 }
 
 provider "random" {

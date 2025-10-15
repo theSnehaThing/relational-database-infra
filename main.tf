@@ -54,13 +54,36 @@ module "user_secrets" {
   }
 }
 
+# IAM Module (used when use_sso = false)
 module "user_iam" {
   source = "./modules/iam"
   aws_region = var.aws_region
   environment = var.environment
-  for_each = local.users
+  for_each = var.use_sso ? {} : local.users
   username = split("@", each.value.email)[0]
   secret_arn = module.user_secrets[each.key].secret_arn
+  tag = {
+    Environment = var.environment
+    Project     = "RelationalDatabase"
+    Region      = var.aws_region
+    State       = var.db_state
+  }
+}
+
+# SSO Module (used when use_sso = true)
+module "user_sso" {
+  source = "./modules/sso"
+  for_each = var.use_sso ? local.users : {}
+  
+  environment = var.environment
+  aws_region = var.aws_region
+  username = split("@", each.value.email)[0]
+  first_name = each.value.first_name
+  last_name = each.value.last_name
+  email = each.value.email
+  role = each.value.role
+  secret_arn = module.user_secrets[each.key].secret_arn
+  
   tag = {
     Environment = var.environment
     Project     = "RelationalDatabase"

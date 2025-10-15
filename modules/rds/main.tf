@@ -49,7 +49,7 @@ resource "aws_secretsmanager_secret_version" "base_schema_secret_version" {
 
 # RDS instance - only create for non-LocalStack environments
 resource "aws_db_instance" "this" {
-    count = var.environment == "local" ? 0 : 1
+    count = contains(["local", "localstack", "sso-local", "sso-test"], var.environment) ? 0 : 1
     
     identifier     = "${var.environment}-rds-instance"
     engine         = var.db_engine
@@ -76,7 +76,7 @@ resource "aws_db_instance" "this" {
 
 # Security group - only create for non-LocalStack environments
 resource "aws_security_group" "rds_sg" {
-    count = var.environment == "local" ? 0 : 1
+    count = contains(["local", "localstack", "sso-local", "sso-test"], var.environment) ? 0 : 1
     
     name_prefix = "${var.environment}-rds-sg"
     description = "Security group for RDS instance"

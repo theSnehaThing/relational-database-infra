@@ -64,3 +64,9 @@ variable "db_state" {
     error_message = "Database state must be one of: active, archive, primary, secondary."
   }
 }
+
+variable "use_sso" {
+  description = "Whether to use AWS SSO instead of IAM users"
+  type        = bool
+  default     = false
+}

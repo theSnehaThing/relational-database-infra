@@ -34,8 +34,8 @@ locals {
 
 provider "mysql" {
   endpoint = "${var.db_endpoint}:${var.db_port}"
-  username = var.environment == "local" ? "root" : local.rds_admin.username
-  password = var.environment == "local" ? "rootpassword" : local.rds_admin.password
+  username = contains(["local", "sso-local"], var.environment) ? "root" : local.rds_admin.username
+  password = contains(["local", "sso-local"], var.environment) ? "localstackpassword" : local.rds_admin.password
   tls      = "false"
 }
 
